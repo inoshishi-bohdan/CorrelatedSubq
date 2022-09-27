@@ -1,4 +1,4 @@
-﻿select
+select
 product_id,title,manufacturer_id,manufacturer as manufacturer
 from (
 select
