@@ -13,6 +13,6 @@ left join order_details od on od.product_id = p.id
 left join manufacturer m on m.id = p.manufacturer_id
 group by pt.id, pt.title, p.manufacturer_id
 )
-WHERE sm is null or s = sm
+where sm is null or s = sm
 group by product_id
 order by product_id

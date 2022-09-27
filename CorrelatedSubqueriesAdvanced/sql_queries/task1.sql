@@ -1,12 +1,25 @@
-﻿SELECT person.name, person.surname, ROUND(AVG(price_with_discount * product_amount), 2) AS avg_purchase, ROUND(SUM(price_with_discount * product_amount), 2) AS sum_purchase
-FROM 
-customer_order LEFT JOIN customer ON customer_order.customer_id = customer.person_id
-LEFT JOIN person ON customer.person_id = person.id
-LEFT JOIN order_details ON order_details.customer_order_id = customer_order.id
-GROUP BY surname HAVING (SELECT AVG(sum)
-FROM (SELECT price_with_discount * product_amount AS sum 
-FROM person INNER JOIN customer ON person.id = customer.person_id
-INNER JOIN customer_order ON customer_order.customer_id = customer.person_id
-INNER JOIN order_details ON order_details.customer_order_id = customer_order.id
-GROUP BY customer_order_id)) > 70
-ORDER BY sum_purchase, surname
+﻿select
+person.name,
+person.surname,
+
+
+round(avg(order_details.price_with_discount*order_details.product_amount),2) as avg_purchase,
+round(sum(order_details.price_with_discount*order_details.product_amount),2) as sum_purchase
+from order_details
+
+
+left join customer_order on order_details.customer_order_id=customer_order.id
+left join customer on customer_order.customer_id=customer.person_id
+left join person on customer.person_id=person.id
+
+
+where 70<(
+    select 
+    order_details.price_with_discount*order_details.product_amount as money
+    from order_details
+    left join customer_order on order_details.customer_order_id=customer_order.id
+    left join customer on customer_order.customer_id=customer.person_id
+    left join person on customer.person_id=person.id
+)
+group by person.id
+order by sum_purchase, surname
